@@ -66,8 +66,9 @@ Without a `.env` file the app reads `data/jobs.csv` directly and accounts are tu
 
 ## Deploy on Render
 
-1. On [render.com](https://render.com) choose **New → Blueprint** and pick this repository.
-   Render reads `render.yaml`.
+1. Click [**Deploy to Render**](https://render.com/deploy?repo=https://github.com/AyushYadav-rgb477/job-explorer)
+   (or on [render.com](https://render.com) choose **New → Blueprint** and pick this
+   repository). Render reads `render.yaml`.
 2. When asked, enter `SUPABASE_URL` and `SUPABASE_ANON_KEY` (never the service role key).
 3. Every push to `main` redeploys automatically.
 
