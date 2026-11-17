@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Your history · Job Explorer{% endblock %}
+{% block content %}
+<h1>Your match history</h1>
+{% for entry in entries %}
+  <details class="card history" {{ 'open' if loop.first }}>
+    <summary>
+      <span><strong>{{ entry.cv_name }}</strong> <span class="muted small">· {{ entry.created_at[:16] | replace("T", " ") }} UTC</span></span>
+      <span class="muted small">{{ entry.matches | length }} matches · best {{ entry.matches[0].score if entry.matches else 0 }}%</span>
+    </summary>
+    {% if entry.cv_skills %}
+      <p class="label">Skills found</p>
+      <div class="chips">{% for s in entry.cv_skills %}<span class="chip chip-good">{{ s }}</span>{% endfor %}</div>
+    {% endif %}
+    <ol class="history-matches">
+      {% for m in entry.matches %}
+        <li><a href="{{ m.url }}" target="_blank" rel="noopener">{{ m.title }}</a> <span class="muted">· {{ m.company }} · {{ m.score }}%</span></li>
+      {% endfor %}
+    </ol>
+    <form method="post" action="{{ url_for('views.delete_history', entry_id=entry.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-ghost btn-small danger">Delete</button>
+    </form>
+  </details>
+{% else %}
+  <div class="card center">
+    <p class="muted">No saved matches yet.</p>
+    <a class="btn" href="{{ url_for('views.index') }}">Match a CV</a>
+  </div>
+{% endfor %}
+{% endblock %}

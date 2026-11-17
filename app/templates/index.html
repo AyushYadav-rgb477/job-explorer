@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Match your CV · Job Explorer{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Find jobs that fit your CV</h1>
+  <p class="muted">Upload your CV and we'll rank thousands of real job listings by how well they match
+    your skills — and show which skills you're missing for each one.</p>
+</section>
+
+<form id="match-form" class="card upload" enctype="multipart/form-data">
+  <label class="dropzone" id="dropzone">
+    <input type="file" name="cv" id="cv-input" accept=".pdf,.docx" required>
+    <span class="drop-title" id="drop-title">Choose a CV or drop it here</span>
+    <span class="muted small">PDF or DOCX, up to {{ max_upload_mb }} MB. Your file is read in memory and never stored.</span>
+  </label>
+  <button class="btn" id="match-btn" type="submit">Find matching jobs</button>
+  {% if accounts_enabled and not current_user %}
+    <p class="muted small center"><a href="{{ url_for('auth.login') }}">Log in</a> to save your results to History.</p>
+  {% endif %}
+</form>
+
+<div id="status" class="status" role="status" aria-live="polite"></div>
+
+<section id="results" hidden>
+  <div class="card">
+    <h2>Skills we found in your CV</h2>
+    <div id="cv-skills" class="chips"></div>
+  </div>
+  <h2 class="section-title">Top matches</h2>
+  <div id="matches" class="match-list"></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='match.js') }}"></script>
+{% endblock %}

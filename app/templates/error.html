@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} · Job Explorer{% endblock %}
+{% block content %}
+<div class="card center auth">
+  <h1>{{ code }}</h1>
+  <p class="muted">{{ message }}</p>
+  <a class="btn" href="{{ url_for('views.index') }}">Go home</a>
+</div>
+{% endblock %}

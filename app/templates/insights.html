@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Job market insights · Job Explorer{% endblock %}
+{% block content %}
+<h1>Job market insights</h1>
+<p class="muted">What employers on Internshala are asking for — skills, cities, companies and pay.</p>
+
+<div class="stats">
+  <div class="card stat"><span class="stat-value">{{ "{:,}".format(totals.jobs) }}</span><span class="muted">job listings</span></div>
+  <div class="card stat"><span class="stat-value">{{ "{:,}".format(totals.companies) }}</span><span class="muted">companies hiring</span></div>
+  <div class="card stat"><span class="stat-value">{{ totals.cities }}</span><span class="muted">cities</span></div>
+  <div class="card stat"><span class="stat-value">{{ totals.median_salary | lakh }}</span><span class="muted">median salary / yr<br><span class="small">({{ totals.with_salary_pct }}% of listings show pay)</span></span></div>
+</div>
+
+<div class="grid">
+  <div class="card chart-card wide"><h2>Most demanded skills</h2><div class="chart tall"><canvas id="top_skills"></canvas></div></div>
+  <div class="card chart-card"><h2>Cities with most openings</h2><div class="chart"><canvas id="top_cities"></canvas></div></div>
+  <div class="card chart-card"><h2>Top hiring companies</h2><div class="chart"><canvas id="top_companies"></canvas></div></div>
+  <div class="card chart-card"><h2>Salary range of listings</h2><div class="chart"><canvas id="salary_bands"></canvas></div></div>
+  <div class="card chart-card"><h2>Median salary by experience</h2><div class="chart"><canvas id="salary_by_experience"></canvas></div></div>
+  <div class="card chart-card"><h2>Best-paying roles <span class="muted small">(5+ listings)</span></h2><div class="chart"><canvas id="top_paying_titles"></canvas></div></div>
+  <div class="card chart-card"><h2>Most common roles</h2><div class="chart"><canvas id="top_titles"></canvas></div></div>
+  <div class="card wide">
+    <h2>Skills that are asked for together</h2>
+    <p class="muted small">How many listings ask for both skills — learn them as a pair.</p>
+    <ol class="pairs" id="skill_pairs"></ol>
+  </div>
+</div>
+<p id="insights-error" class="status error" hidden></p>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='insights.js') }}"></script>
+{% endblock %}

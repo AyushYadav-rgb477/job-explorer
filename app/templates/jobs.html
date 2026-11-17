@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Browse jobs · Job Explorer{% endblock %}
+{% block content %}
+<h1>Browse jobs</h1>
+
+<form class="card filters" method="get">
+  <input type="search" name="q" value="{{ filters.q }}" placeholder="Title or company" aria-label="Title or company">
+  <select name="city" aria-label="City">
+    <option value="">Any city</option>
+    {% for c in cities %}<option {{ 'selected' if c == filters.city }}>{{ c }}</option>{% endfor %}
+  </select>
+  <select name="skill" aria-label="Skill">
+    <option value="">Any skill</option>
+    {% for s in skills %}<option {{ 'selected' if s == filters.skill }}>{{ s }}</option>{% endfor %}
+  </select>
+  <select name="min_salary" aria-label="Minimum salary">
+    <option value="">Any salary</option>
+    {% for v in [200000, 300000, 400000, 600000, 1000000] %}
+      <option value="{{ v }}" {{ 'selected' if filters.min_salary == v }}>{{ v | lakh }}+</option>
+    {% endfor %}
+  </select>
+  <button class="btn">Filter</button>
+</form>
+
+<p class="muted">{{ "{:,}".format(total) }} job{{ '' if total == 1 else 's' }}</p>
+
+<div class="table-wrap card">
+<table class="jobs">
+  <thead><tr><th>Role</th><th>Location</th><th>Experience</th><th>Salary / yr</th><th>Skills</th></tr></thead>
+  <tbody>
+  {% for job in jobs %}
+    <tr>
+      <td><a href="{{ job.url }}" target="_blank" rel="noopener"><strong>{{ job.title }}</strong></a><br><span class="muted small">{{ job.company }}</span></td>
+      <td>{{ job.cities[:2] | join(", ") or "—" }}{% if job.cities|length > 2 %} <span class="muted">+{{ job.cities|length - 2 }}</span>{% endif %}{% if job.is_hybrid %} <span class="tag">Hybrid</span>{% endif %}</td>
+      <td>{% if job.experience_years is not none %}{{ job.experience_years }} yr{% else %}—{% endif %}</td>
+      <td>{% if job.salary_min is not none %}{{ job.salary_min | lakh }}{% if job.salary_max != job.salary_min %} – {{ job.salary_max | lakh }}{% endif %}{% else %}—{% endif %}</td>
+      <td><div class="chips">{% for s in job.skills[:4] %}<span class="chip">{{ s }}</span>{% endfor %}{% if job.skills|length > 4 %}<span class="chip muted">+{{ job.skills|length - 4 }}</span>{% endif %}</div></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="muted center">No jobs match these filters.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% if pages > 1 %}
+<nav class="pager">
+  {% set args = request.args.to_dict() %}
+  {% if page > 1 %}{% set _ = args.update(page=page - 1) %}<a class="btn btn-ghost btn-small" href="?{{ args | urlencode }}">← Previous</a>{% endif %}
+  <span class="muted">Page {{ page }} of {{ pages }}</span>
+  {% if page < pages %}{% set _ = args.update(page=page + 1) %}<a class="btn btn-ghost btn-small" href="?{{ args | urlencode }}">Next →</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

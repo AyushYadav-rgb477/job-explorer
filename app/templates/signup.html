@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sign up · Job Explorer{% endblock %}
+{% block content %}
+<div class="card auth">
+  <h1>Create an account</h1>
+  <p class="muted small">Save every CV match so you can compare them later.</p>
+  {% if accounts_enabled %}
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email <input type="email" name="email" autocomplete="email" required value="{{ request.form.email }}"></label>
+    <label>Password <input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+    <label>Confirm password <input type="password" name="confirm" autocomplete="new-password" minlength="8" required></label>
+    <button class="btn">Sign up</button>
+  </form>
+  <p class="muted small center">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+  {% else %}
+  <p class="muted">Accounts are turned off because Supabase isn't configured on this server.</p>
+  {% endif %}
+</div>
+{% endblock %}
