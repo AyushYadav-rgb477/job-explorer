@@ -142,7 +142,8 @@ def healthz():
 
 @bp.app_errorhandler(413)
 def too_large(_):
-    return jsonify(error="That file is too big. The limit is 5 MB."), 413
+    from . import MAX_UPLOAD_MB
+    return jsonify(error=f"That file is too big. The limit is {MAX_UPLOAD_MB} MB."), 413
 
 
 @bp.app_errorhandler(404)

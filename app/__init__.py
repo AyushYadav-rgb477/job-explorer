@@ -5,25 +5,31 @@ import logging
 import os
 import secrets
 from datetime import timedelta
+from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask, abort, request, session
 
-MAX_UPLOAD_MB = 5
+MAX_UPLOAD_MB = 4  # Vercel rejects request bodies over 4.5 MB
+
+# Static files live in public/static: Vercel serves public/ from its CDN, and locally (or on
+# Render) Flask serves the same folder at the same /static URLs.
+STATIC_DIR = Path(__file__).resolve().parent.parent / "public" / "static"
 
 
 def create_app(config: dict | None = None) -> Flask:
     load_dotenv()
     logging.basicConfig(level=logging.INFO)
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder=str(STATIC_DIR), static_url_path="/static")
     app.config.update(
         SECRET_KEY=os.getenv("SECRET_KEY") or secrets.token_hex(32),
         MAX_CONTENT_LENGTH=MAX_UPLOAD_MB * 1024 * 1024,
         PERMANENT_SESSION_LIFETIME=timedelta(days=7),
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
-        SESSION_COOKIE_SECURE=os.getenv("RENDER") is not None,  # Render serves over HTTPS
+        # Vercel and Render serve over HTTPS; local development doesn't.
+        SESSION_COOKIE_SECURE=bool(os.getenv("VERCEL") or os.getenv("RENDER")),
     )
     if config:
         app.config.update(config)
